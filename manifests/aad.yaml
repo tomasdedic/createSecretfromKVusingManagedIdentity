@@ -1,0 +1,16 @@
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentity
+metadata:
+  name: podtohoneypotvault
+spec:
+  type: 0
+  resourceID: /subscriptions/483903a0-100e-4f65-a396-dbdc643d7692/resourceGroups/MC_opsdemo_opsdemoAKS_westeurope/providers/Microsoft.ManagedIdentity/userAssignedIdentities/podtohoneypotvault
+  clientID: bfeab0d8-98a0-4bf6-be01-b47e62c0b710
+---
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentityBinding
+metadata:
+  name: podtohoneypot
+spec:
+  azureIdentity: podtohoneypotvault
+  selector: podtohoneypot

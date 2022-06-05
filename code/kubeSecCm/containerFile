@@ -1,0 +1,15 @@
+FROM golang:1.18.3-alpine3.16 as build
+ENV GO111MODULE=on
+WORKDIR /app/build
+COPY ./go.mod .
+COPY ./go.sum .
+RUN go mod download
+COPY ./kSec.go .
+RUN CGO_ENABLED=0 go build kSec.go
+
+FROM alpine:latest as runner
+WORKDIR /app/
+COPY --from=build /app/build/kSec ./
+RUN chmod +x ./kSec
+CMD [ "./kSec" ]
+

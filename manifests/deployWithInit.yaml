@@ -1,0 +1,37 @@
+ # trafic analysis, network scanner
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netshootwithinit
+spec:
+  selector:
+    matchLabels:
+      app: netshootwithinit
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: netshootwithinit # This label identifies our application, used for filtering output
+        aadpodidbinding: podtohoneypot
+    spec:
+      restartPolicy: Always
+      initContainers:
+        - name: kvsec
+          image: quay.io/dedtom/kvsec:0.2
+          env:
+            - name: KV_NAME
+              value: "honeypotvault"
+            - name: KV_SECRET
+              value: "master"
+            - name: SECRET_NAME
+              value: "redissec"
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      containers:
+        - name: netshoot
+          image: nicolaka/netshoot
+          # command: ["/bin/sh", "-c", "cp /standalone/configmap/* /standalone/config"]
+          command: ["/bin/sh", "-c", "--"]
+          args: ["sleep 200000000"]

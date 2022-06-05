@@ -1,0 +1,34 @@
+ # trafic analysis, network scanner
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netshoot
+spec:
+  selector:
+    matchLabels:
+      app: netshoot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: netshoot # This label identifies our application, used for filtering output
+        aadpodidbinding: podtohoneypot
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: netshoot
+          image: nicolaka/netshoot
+          # command: ["/bin/sh", "-c", "cp /standalone/configmap/* /standalone/config"]
+          command: ["/bin/sh", "-c", "--"]
+          args: ["sleep 200000000"]
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname"

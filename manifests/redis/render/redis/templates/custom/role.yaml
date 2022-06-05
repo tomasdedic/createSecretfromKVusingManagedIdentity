@@ -1,0 +1,15 @@
+---
+# Source: redis/templates/custom/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: access-secrets
+rules:
+- resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
